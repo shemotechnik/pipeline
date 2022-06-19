@@ -1,9 +1,12 @@
 package main
-
+/*
+Пайплайн на каналах
+*/
 import (
 	"container/ring"
 	"fmt"
 	"bufio"
+	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -30,6 +33,7 @@ func main(){
 				data = scanner.Text()
 				if strings.EqualFold(data, "exit") {
 					fmt.Println("Программа завершила работу!")
+					log.Printf("%s\n","exit from program")
 					return
 				}
 				i, err := strconv.Atoi(data)
@@ -38,6 +42,7 @@ func main(){
 					continue
 				}
 				c <- i
+				log.Printf("%s %d\n","add new information to chanel:", i)
 			}
 		}()
 		return c, done
@@ -51,6 +56,7 @@ func main(){
 				case data := <-c:
 					if data > 0 {
 						convertedIntChan <- data
+						log.Printf("%s %d\n","filter value to chanel chanel:",data)
 					}
 				case <-done:
 					return
@@ -69,6 +75,7 @@ func main(){
 					if data != 0 && data%3 == 0 {
 						select {
 						case filteredIntChan <- data:
+							log.Printf("%s %d\n","filter value that can be devided by 3 to chanel:", data)
 						case <-done:
 							return
 						}
@@ -111,6 +118,7 @@ func main(){
 						for _, data := range bufferData {
 							select {
 							case bufferedIntChan <- data:
+								log.Printf("%s %d\n","put data to chanel:", data)
 							case <-done:
 								return
 							}
@@ -129,6 +137,7 @@ func main(){
 			select {
 			case data := <-c:
 				fmt.Printf("Обработаны данные: %d\n", data)
+				log.Printf("%s %d\n","print data to chanel:",data)
 			case <-done:
 				return
 			}
