@@ -5,9 +5,7 @@ package main
 import (
 	"container/ring"
 	"fmt"
-	"bufio"
 	"log"
-	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -26,23 +24,23 @@ func main(){
 		done := make(chan bool)
 		go func() {
 			defer close(done)
-			scanner := bufio.NewScanner(os.Stdin)
 			var data string
 			for {
-				scanner.Scan()
-				data = scanner.Text()
-				if strings.EqualFold(data, "exit") {
-					fmt.Println("Программа завершила работу!")
-					log.Printf("%s\n","exit from program")
-					return
+				fmt.Scanln(&data)
+				if data != "" {
+					if strings.EqualFold(data, "exit") {
+						fmt.Println("Программа завершила работу!")
+						log.Printf("%s\n", "exit from program")
+						return
+					}
+					i, err := strconv.Atoi(data)
+					if err != nil {
+						fmt.Println("Программа обрабатывает только целые числа!")
+						return
+					}
+					c <- i
+					log.Printf("%s %d\n", "add new information to chanel:", i)
 				}
-				i, err := strconv.Atoi(data)
-				if err != nil {
-					fmt.Println("Программа обрабатывает только целые числа!")
-					continue
-				}
-				c <- i
-				log.Printf("%s %d\n","add new information to chanel:", i)
 			}
 		}()
 		return c, done

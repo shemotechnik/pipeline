@@ -1,8 +1,7 @@
 FROM golang:latest AS compiling_stage
 RUN mkdir -p /go/src/pipeline
 WORKDIR /go/src/pipeline
-ADD pipeline.go .
-ADD go.mod .
+COPY ./ ./
 RUN go install .
 
 FROM alpine:latest
